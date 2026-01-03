@@ -127,7 +127,7 @@ pub enum Condition {
 }
 
 /// Comparison operator
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CompareOp {
     Equal,
     NotEqual,
