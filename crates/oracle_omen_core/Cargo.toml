@@ -6,6 +6,9 @@ rust-version.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
+description = "Core types and abstractions for oracle.omen deterministic agent framework"
+keywords = ["deterministic", "agent", "event-sourcing", "audit", "replay"]
+categories = ["development-tools", "data-structures"]
 
 [dependencies]
 serde = { workspace = true }
