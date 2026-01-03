@@ -34,8 +34,8 @@ blake3 = "1.5"
 # CRDT for memory
 delta = "0.5"
 
-# Async runtime (optional, used conditionally)
-tokio = { version = "1.42", features = ["sync", "rt"], optional = true }
+# Async runtime
+tokio = { version = "1.42", features = ["sync", "rt"] }
 
 # CLI
 clap = { version = "4.5", features = ["derive"] }
