@@ -12,10 +12,10 @@ name = "oracle-omen"
 path = "src/main.rs"
 
 [dependencies]
-oracle_omen_core = { path = "../oracle_omen_core" }
-oracle_omen_plan = { path = "../oracle_omen_plan" }
-oracle_omen_runtime = { path = "../oracle_omen_runtime" }
-oracle_omen_memory = { path = "../oracle_omen_memory" }
+oracle_omen_core = { path = "../oracle_omen_core", version = "0.1" }
+oracle_omen_plan = { path = "../oracle_omen_plan", version = "0.1" }
+oracle_omen_runtime = { path = "../oracle_omen_runtime", version = "0.1" }
+oracle_omen_memory = { path = "../oracle_omen_memory", version = "0.1" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 thiserror = { workspace = true }
