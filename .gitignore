@@ -1,0 +1,25 @@
+# Rust
+/target/
+Cargo.lock
+**/*.rs.bk
+*.pdb
+
+# Oracle Omen data directory
+.oracle-omen/
+*.db
+*.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+/dist/
+/build/

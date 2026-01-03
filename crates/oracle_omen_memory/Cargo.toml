@@ -1,0 +1,20 @@
+[package]
+name = "oracle_omen_memory"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+oracle_omen_core = { path = "../oracle_omen_core" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_with = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+delta = { workspace = true }
+
+[dev-dependencies]
+proptest = { workspace = true }

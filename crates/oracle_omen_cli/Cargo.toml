@@ -1,0 +1,26 @@
+[package]
+name = "oracle_omen_cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "oracle-omen"
+path = "src/main.rs"
+
+[dependencies]
+oracle_omen_core = { path = "../oracle_omen_core" }
+oracle_omen_plan = { path = "../oracle_omen_plan" }
+oracle_omen_runtime = { path = "../oracle_omen_runtime" }
+oracle_omen_memory = { path = "../oracle_omen_memory" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+clap = { workspace = true }
+console = { workspace = true }
+tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }

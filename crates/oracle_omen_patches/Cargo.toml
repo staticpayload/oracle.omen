@@ -1,0 +1,22 @@
+[package]
+name = "oracle_omen_patches"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+oracle_omen_core = { path = "../oracle_omen_core" }
+oracle_omen_policy = { path = "../oracle_omen_policy" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_with = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+ed25519-dalek = "2.1"
+sha2 = "0.10"
+
+[dev-dependencies]
+proptest = { workspace = true }
