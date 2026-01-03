@@ -204,13 +204,14 @@ impl EvaluationResult {
 
     /// Create a deny result
     pub fn denied(reason: impl Into<String>) -> Self {
+        let reason_str = reason.into();
         Self {
             allowed: false,
             action: Action::Deny {
-                reason: reason.into(),
+                reason: reason_str.clone(),
             },
             matched_rules: Vec::new(),
-            reason: reason.into(),
+            reason: reason_str,
         }
     }
 }
