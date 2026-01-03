@@ -2,7 +2,7 @@
 //!
 //! Compiles planning DSL into validated DAG with deterministic execution order.
 
-use crate::{dag::Dag, dsl::Plan};
+use crate::{dag::Dag, dsl::Plan, dag::DagNode, dag::DagNodeType};
 
 /// Compiler for plans
 pub struct PlanCompiler;
@@ -14,8 +14,8 @@ impl PlanCompiler {
 
         // First pass: add all nodes
         for step in &plan.steps {
-            let node_type = self.step_to_node_type(step)?;
-            let mut node = dag::DagNode::new(step.id.clone(), node_type);
+            let node_type = Self::step_to_node_type(step)?;
+            let mut node = DagNode::new(step.id.clone(), node_type);
             node.capabilities = step.capabilities.clone();
             node.resources = step.resources.clone();
             node.failure_policy = step.failure_policy.clone();
@@ -38,33 +38,33 @@ impl PlanCompiler {
     }
 
     /// Convert a plan step to a DAG node type
-    fn step_to_node_type(&self, step: &crate::dsl::PlanStep) -> Result<dag::DagNodeType, CompileError> {
+    fn step_to_node_type(step: &crate::dsl::PlanStep) -> Result<DagNodeType, CompileError> {
         match &step.step_type {
-            crate::dsl::StepType::Tool { name, version, .. } => Ok(dag::DagNodeType::Tool {
+            crate::dsl::StepType::Tool { name, version, .. } => Ok(DagNodeType::Tool {
                 name: name.clone(),
                 version: version.clone(),
             }),
-            crate::dsl::StepType::Observation { source, .. } => Ok(dag::DagNodeType::Observation {
+            crate::dsl::StepType::Observation { source, .. } => Ok(DagNodeType::Observation {
                 source: source.clone(),
             }),
-            crate::dsl::StepType::Decision { condition, .. } => Ok(dag::DagNodeType::Decision {
+            crate::dsl::StepType::Decision { condition, .. } => Ok(DagNodeType::Decision {
                 condition: condition.clone(),
             }),
             crate::dsl::StepType::Sequential { steps } => {
                 // For sequential steps, we return a custom marker
                 // The actual sequential execution is handled by the runtime
-                Ok(dag::DagNodeType::Custom {
+                Ok(DagNodeType::Custom {
                     type_name: "sequential".to_string(),
                     config: serde_json::json!({ "steps": steps }).into(),
                 })
             }
             crate::dsl::StepType::Parallel { steps } => {
-                Ok(dag::DagNodeType::Custom {
+                Ok(DagNodeType::Custom {
                     type_name: "parallel".to_string(),
                     config: serde_json::json!({ "steps": steps }).into(),
                 })
             }
-            crate::dsl::StepType::Custom { type_name, config } => Ok(dag::DagNodeType::Custom {
+            crate::dsl::StepType::Custom { type_name, config } => Ok(DagNodeType::Custom {
                 type_name: type_name.clone(),
                 config: config.clone(),
             }),
@@ -107,8 +107,8 @@ impl std::fmt::Display for CompileError {
 
 impl std::error::Error for CompileError {}
 
-impl From<dag::DagError> for CompileError {
-    fn from(e: dag::DagError) -> Self {
+impl From<crate::dag::DagError> for CompileError {
+    fn from(e: crate::dag::DagError) -> Self {
         CompileError::Dag(e.to_string())
     }
 }

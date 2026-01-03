@@ -142,13 +142,13 @@ impl Dag {
     }
 
     /// Get dependencies for a node
-    pub fn dependencies(&self, id: &str) -> &BTreeSet<String> {
-        self.edges.get(id).map_or(&BTreeSet::new(), |s| s)
+    pub fn dependencies(&self, id: &str) -> Option<&BTreeSet<String>> {
+        self.edges.get(id)
     }
 
     /// Get dependents of a node
-    pub fn dependents(&self, id: &str) -> &BTreeSet<String> {
-        self.reverse_edges.get(id).map_or(&BTreeSet::new(), |s| s)
+    pub fn dependents(&self, id: &str) -> Option<&BTreeSet<String>> {
+        self.reverse_edges.get(id)
     }
 
     /// Get node count
