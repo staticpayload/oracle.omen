@@ -1,6 +1,6 @@
 //! Scheduler for DAG execution with backpressure.
 
-use crate::executor::{ExecResult, ExecState, ExecError};
+use crate::executor::{ExecResult, ExecError};
 use oracle_omen_plan::dag::Dag;
 use std::collections::{HashMap, VecDeque};
 
@@ -41,12 +41,18 @@ impl Scheduler {
 
         for node_id in &order {
             let deps = dag.dependencies(node_id);
-            remaining_deps.insert(node_id.clone(), deps.len());
+            let dep_count = deps.as_ref().map_or(0, |d| d.len());
+            remaining_deps.insert(node_id.clone(), dep_count);
 
-            if deps.is_empty() {
-                self.ready.push_back(node_id.clone());
+            if let Some(dep_set) = deps {
+                if dep_set.is_empty() {
+                    self.ready.push_back(node_id.clone());
+                } else {
+                    self.pending.insert(node_id.clone(), dep_set.iter().cloned().collect());
+                }
             } else {
-                self.pending.insert(node_id.clone(), deps.iter().cloned().collect());
+                // No dependencies
+                self.ready.push_back(node_id.clone());
             }
         }
 

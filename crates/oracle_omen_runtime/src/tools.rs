@@ -2,7 +2,7 @@
 
 use oracle_omen_core::{
     hash::Hash,
-    tool::{ResourceBounds, SideEffect, ToolError, ToolId, ToolResponseMetadata, ToolResult},
+    tool::{ResourceBounds, SideEffect, ToolError, ToolId, ToolResult},
 };
 use std::sync::Arc;
 
@@ -90,11 +90,12 @@ pub struct EchoTool;
 
 impl DynTool for EchoTool {
     fn id(&self) -> &ToolId {
-        static ID: ToolId = ToolId {
-            name: "echo",
-            version: "1.0.0",
-        };
-        &ID
+        use std::sync::OnceLock;
+        static ID: OnceLock<ToolId> = OnceLock::new();
+        ID.get_or_init(|| ToolId {
+            name: "echo".to_string(),
+            version: "1.0.0".to_string(),
+        })
     }
 
     fn capabilities(&self) -> Vec<String> {
@@ -129,11 +130,12 @@ pub struct HashTool;
 
 impl DynTool for HashTool {
     fn id(&self) -> &ToolId {
-        static ID: ToolId = ToolId {
-            name: "hash",
-            version: "1.0.0",
-        };
-        &ID
+        use std::sync::OnceLock;
+        static ID: OnceLock<ToolId> = OnceLock::new();
+        ID.get_or_init(|| ToolId {
+            name: "hash".to_string(),
+            version: "1.0.0".to_string(),
+        })
     }
 
     fn capabilities(&self) -> Vec<String> {

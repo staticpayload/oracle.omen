@@ -1,6 +1,6 @@
 //! DAG executor - runs compiled DAGs with capability enforcement.
 
-use oracle_omen_core::{capability::CapabilitySet, error::Error};
+use oracle_omen_core::capability::{Capability, CapabilitySet};
 use oracle_omen_plan::dag::Dag;
 use std::collections::HashMap;
 use std::sync::Arc;
