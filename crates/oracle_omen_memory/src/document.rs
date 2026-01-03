@@ -90,9 +90,6 @@ pub enum DocumentValue {
     /// Integer
     Integer(i64),
 
-    /// Float
-    Float(f64),
-
     /// Boolean
     Bool(bool),
 
@@ -116,7 +113,6 @@ impl DocumentValue {
             DocumentValue::String(_) => "string",
             DocumentValue::Bytes(_) => "bytes",
             DocumentValue::Integer(_) => "integer",
-            DocumentValue::Float(_) => "float",
             DocumentValue::Bool(_) => "bool",
             DocumentValue::Map(_) => "map",
             DocumentValue::Vec(_) => "vec",

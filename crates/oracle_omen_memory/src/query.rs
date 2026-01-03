@@ -149,7 +149,6 @@ pub enum QueryOrder {
 }
 
 /// Query filter
-#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Filter {
     /// Key equals
     KeyEquals(String),
@@ -162,6 +161,29 @@ pub enum Filter {
 
     /// Custom predicate
     Custom(Box<dyn Fn(&QueryResultItem) -> bool>),
+}
+
+impl Clone for Filter {
+    fn clone(&self) -> Self {
+        match self {
+            Filter::KeyEquals(s) => Filter::KeyEquals(s.clone()),
+            Filter::KeyPrefix(s) => Filter::KeyPrefix(s.clone()),
+            Filter::TypeEquals(s) => Filter::TypeEquals(s.clone()),
+            // Custom filter can't be cloned, create a new one that always returns false
+            Filter::Custom(_) => Filter::KeyEquals("__uncloneable_filter__".to_string()),
+        }
+    }
+}
+
+impl std::fmt::Debug for Filter {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Filter::KeyEquals(s) => f.debug_tuple("KeyEquals").field(s).finish(),
+            Filter::KeyPrefix(s) => f.debug_tuple("KeyPrefix").field(s).finish(),
+            Filter::TypeEquals(s) => f.debug_tuple("TypeEquals").field(s).finish(),
+            Filter::Custom(_) => f.debug_tuple("Custom").field(&"<function>").finish(),
+        }
+    }
 }
 
 impl Filter {
