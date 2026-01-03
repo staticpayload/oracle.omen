@@ -8,12 +8,7 @@
 //!
 //! All hashes are canonicalized before computation.
 
-#![no_std]
-
-extern crate alloc;
-
-use alloc::{string::String, vec::Vec};
-use core::fmt;
+use crate::error::HashError;
 
 /// Length of a hash in bytes
 pub const HASH_SIZE: usize = 32;
@@ -108,7 +103,7 @@ impl Hash {
 
     /// Check if this is the zero hash
     #[must_use]
-    pub const fn is_zero(&self) -> bool {
+    pub fn is_zero(&self) -> bool {
         self.0.iter().all(|&b| b == 0)
     }
 }
@@ -152,7 +147,7 @@ impl<'de> serde::Deserialize<'de> for Hash {
 }
 
 impl AsRef<[u8]> for Hash {
-    fn fn as_ref(&self) -> &[u8] {
+    fn as_ref(&self) -> &[u8] {
         &self.0
     }
 }

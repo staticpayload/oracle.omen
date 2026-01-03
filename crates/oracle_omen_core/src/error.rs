@@ -2,15 +2,11 @@
 //!
 //! All errors are data. No panics in runtime paths.
 
-#![no_std]
-
-extern crate alloc;
-
-use alloc::string::String;
-use core::fmt;
+use std::fmt;
+use std::string::String;
 
 /// Core result type
-pub type Result<T> = core::result::Result<T, Error>;
+pub type Result<T> = std::result::Result<T, Error>;
 
 /// Core error types
 #[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]

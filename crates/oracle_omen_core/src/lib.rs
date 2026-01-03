@@ -11,9 +11,6 @@
 #![warn(clippy::all)]
 #![deny(clippy::unwrap_used)]
 #![deny(clippy::expect_used)]
-#![no_std]
-
-extern crate alloc;
 
 pub mod event;
 pub mod hash;
@@ -34,7 +31,3 @@ pub use error::*;
 pub use time::*;
 pub use serde_utils::*;
 pub use replay::*;
-
-// Core re-exports
-pub use alloc::string::String;
-pub use alloc::vec::Vec;

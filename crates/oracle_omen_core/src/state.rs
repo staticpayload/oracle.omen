@@ -4,12 +4,10 @@
 //! Input: prior state, observation, tool responses, injected deterministic context
 //! Output: next state, planned actions, patch proposals
 
-#![no_std]
-
-extern crate alloc;
-
-use alloc::{collections::BTreeMap, string::String, vec::Vec};
-use core::fmt;
+use std::collections::BTreeMap;
+use std::fmt;
+use std::string::String;
+use std::vec::Vec;
 
 use crate::hash::Hash;
 
@@ -130,9 +128,6 @@ pub enum StateValue {
     /// Signed 64-bit integer
     I64(i64),
 
-    /// Float (use carefully in consensus paths)
-    F64(f64),
-
     /// Bytes
     Bytes(Vec<u8>),
 
@@ -152,7 +147,6 @@ impl StateValue {
             StateValue::Bool(_) => "bool",
             StateValue::U64(_) => "u64",
             StateValue::I64(_) => "i64",
-            StateValue::F64(_) => "f64",
             StateValue::Bytes(_) => "bytes",
             StateValue::Hash(_) => "hash",
             StateValue::None => "none",

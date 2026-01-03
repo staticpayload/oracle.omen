@@ -2,12 +2,10 @@
 //!
 //! Capabilities are immutable during execution and checked before tool use.
 
-#![no_std]
-
-extern crate alloc;
-
-use alloc::{collections::BTreeSet, string::String, vec::Vec};
-use core::fmt;
+use std::collections::BTreeSet;
+use std::fmt;
+use std::string::String;
+use std::vec::Vec;
 
 /// A capability grants permission to perform a specific class of actions
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, serde::Serialize, serde::Deserialize)]
@@ -103,7 +101,7 @@ impl CapabilitySet {
     /// Check if a capability pattern is granted
     #[must_use]
     pub fn has_pattern(&self, pattern: &str) -> bool {
-        self.inner.iter().any(|c| c.matches(pattern))
+        self.inner.iter().any(|c: &Capability| c.matches(pattern))
     }
 
     /// Check if any of the required capabilities are granted
@@ -148,39 +146,37 @@ impl Default for CapabilitySet {
     }
 }
 
-/// Standard capability domains
-pub mod std {
+/// Common capability domains
+pub mod common {
     use super::Capability;
 
     /// File system read capability
-    pub const fn fs_read(path: &str) -> Capability {
-        // This is a const-friendly placeholder
-        // Actual usage would need runtime construction
-        Capability::new("fs:read:*")
+    pub fn fs_read(path: &str) -> Capability {
+        Capability::new(&format!("fs:read:{}", path))
     }
 
     /// File system write capability
-    pub const fn fs_write() -> Capability {
+    pub fn fs_write() -> Capability {
         Capability::new("fs:write:*")
     }
 
     /// Network HTTP capability
-    pub const fn network_http() -> Capability {
+    pub fn network_http() -> Capability {
         Capability::new("network:http:*")
     }
 
     /// Network HTTPS capability
-    pub const fn network_https() -> Capability {
+    pub fn network_https() -> Capability {
         Capability::new("network:https:*")
     }
 
     /// Process execution capability
-    pub const fn process_exec() -> Capability {
+    pub fn process_exec() -> Capability {
         Capability::new("process:exec:*")
     }
 
     /// Environment variable read capability
-    pub const fn env_read() -> Capability {
+    pub fn env_read() -> Capability {
         Capability::new("env:read:*")
     }
 }

@@ -2,12 +2,10 @@
 //!
 //! Enforces stable ordering and canonical representation.
 
-#![no_std]
-
-extern crate alloc;
-
-use alloc::{collections::BTreeMap, string::String, vec::Vec};
-use core::fmt;
+use std::collections::{BTreeMap, BTreeSet};
+use std::fmt;
+use std::string::String;
+use std::vec::Vec;
 
 /// Error for canonical serialization
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -88,12 +86,18 @@ impl CanonicalJson {
 /// Always serializes maps with sorted keys.
 pub trait StableSerialize: serde::Serialize {
     /// Serialize to canonical JSON string
-    fn to_canonical_json(&self) -> CanonicalResult<String> {
+    fn to_canonical_json(&self) -> CanonicalResult<String>
+    where
+        Self: Sized,
+    {
         CanonicalJson::serialize(self)
     }
 
     /// Serialize to canonical JSON bytes
-    fn to_canonical_json_bytes(&self) -> CanonicalResult<Vec<u8>> {
+    fn to_canonical_json_bytes(&self) -> CanonicalResult<Vec<u8>>
+    where
+        Self: Sized,
+    {
         CanonicalJson::serialize_bytes(self)
     }
 }
@@ -105,9 +109,6 @@ pub type StableMap<K, V> = BTreeMap<K, V>;
 
 /// Stable set wrapper
 pub type StableSet<T> = BTreeSet<T>;
-
-/// Re-export BTreeSet for convenience
-pub use alloc::collections::BTreeSet;
 
 #[cfg(test)]
 mod tests {

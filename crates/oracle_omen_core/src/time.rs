@@ -3,11 +3,6 @@
 //! All time must be injected, never from system clock.
 //! Uses logical time (monotonically increasing counters) for determinism.
 
-#![no_std]
-
-extern crate alloc;
-
-use alloc::string::String;
 use core::fmt;
 
 /// Logical timestamp - deterministic and injectable
@@ -130,7 +125,7 @@ impl MockTimeSource {
 
     /// Advance by a specific amount
     pub fn advance(&self, delta: u64) -> LogicalTime {
-        let seq = self.sequence.fetch_add(delta, core::sync::atomic::Ordering::SeqCst);
+        let seq = self.time.fetch_add(delta, core::sync::atomic::Ordering::SeqCst);
         LogicalTime::new(self.run_id, seq)
     }
 }

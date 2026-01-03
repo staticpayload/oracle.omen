@@ -6,12 +6,10 @@
 //! - Include hashes for verification
 //! - Reference parent events for causal links
 
-#![no_std]
-
-extern crate alloc;
-
-use alloc::{collections::BTreeMap, string::String, vec::Vec};
-use core::fmt;
+use std::collections::BTreeMap;
+use std::fmt;
+use std::string::String;
+use std::vec::Vec;
 
 use crate::{
     capability::Capability,

@@ -6,12 +6,10 @@
 //! - Detect divergence and output minimal diff
 //! - Support partial replay from any snapshot boundary
 
-#![no_std]
-
-extern crate alloc;
-
-use alloc::{collections::BTreeMap, string::String, vec::Vec};
-use core::fmt;
+use std::collections::BTreeMap;
+use std::fmt;
+use std::string::String;
+use std::vec::Vec;
 
 use crate::{
     event::{Event, EventId, EventLog, EventLogError},
@@ -67,9 +65,9 @@ impl ReplayEngine {
     /// Replay a single event
     ///
     /// Returns Some(event) if an event was processed, None if at end.
-    pub fn step(&mut self) -> Option<&Event> {
-        let event = self.log.get_by_sequence(self.position)?;
-        self.apply_event(event);
+    pub fn step(&mut self) -> Option<Event> {
+        let event = self.log.get_by_sequence(self.position)?.clone();
+        self.apply_event(&event);
         self.position += 1;
         Some(event)
     }
@@ -77,7 +75,7 @@ impl ReplayEngine {
     /// Apply an event to the current state
     fn apply_event(&mut self, event: &Event) {
         match &event.payload {
-            crate::event::EventPayload::StateTransition(payload) => {
+            crate::event::EventPayload::StateTransition(_payload) => {
                 // Verify state hash matches before applying
                 if let Some(before_hash) = event.state_hash_before {
                     if self.current_state.hash() != before_hash {

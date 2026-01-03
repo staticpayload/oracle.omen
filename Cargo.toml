@@ -32,7 +32,7 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 blake3 = "1.5"
 
 # CRDT for memory
-delta = "0.5"
+delta = "0.2"
 
 # Async runtime
 tokio = { version = "1.42", features = ["sync", "rt"] }

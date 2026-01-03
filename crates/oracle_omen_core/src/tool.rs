@@ -8,12 +8,9 @@
 //! - Determinism declaration
 //! - Resource bounds
 
-#![no_std]
-
-extern crate alloc;
-
-use alloc::{string::String, vec::Vec};
-use core::{fmt, time::Duration};
+use std::string::String;
+use std::vec::Vec;
+use std::{fmt, time::Duration};
 
 use crate::capability::Capability;
 use crate::hash::Hash;
