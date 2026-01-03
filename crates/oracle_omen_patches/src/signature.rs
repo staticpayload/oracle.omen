@@ -1,19 +1,21 @@
 //! Cryptographic signatures for patches.
 
 use serde::{Deserialize, Serialize};
+use serde_bytes::{ByteBuf as SerdeByteBuf};
 use std::fmt;
 
 /// Signature using Ed25519
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Signature {
-    /// Signature bytes
-    pub bytes: [u8; 64],
+    /// Signature bytes (as serde_bytes for large array)
+    #[serde(with = "serde_bytes")]
+    pub bytes: Vec<u8>,
 }
 
 impl Signature {
     /// Create signature from bytes
     pub fn from_bytes(bytes: [u8; 64]) -> Self {
-        Self { bytes }
+        Self { bytes: bytes.to_vec() }
     }
 
     /// Get signature as hex
@@ -27,35 +29,36 @@ impl Signature {
             return Err(SignatureError::InvalidLength);
         }
 
-        let mut bytes = [0u8; 64];
+        let mut bytes = Vec::with_capacity(64);
         for i in 0..64 {
             let byte_str = &hex[i * 2..i * 2 + 2];
-            bytes[i] = u8::from_str_radix(byte_str, 16)
-                .map_err(|_| SignatureError::InvalidHex)?;
+            bytes.push(u8::from_str_radix(byte_str, 16)
+                .map_err(|_| SignatureError::InvalidHex)?);
         }
 
         Ok(Self { bytes })
     }
 
     /// Verify signature
-    pub fn verify(&self, message: &[u8], signer: &SignerId) -> bool {
+    pub fn verify(&self, _message: &[u8], _signer: &SignerId) -> bool {
         // In production, use ed25519_dalek
         // For now, placeholder that checks signature format
-        self.bytes != [0u8; 64]
+        self.bytes.len() == 64 && self.bytes.iter().any(|&b| b != 0)
     }
 }
 
 /// Signer identity (public key)
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct SignerId {
-    /// Public key bytes
-    pub public_key: [u8; 32],
+    /// Public key bytes (as serde_bytes for large array)
+    #[serde(with = "serde_bytes")]
+    pub public_key: Vec<u8>,
 }
 
 impl SignerId {
     /// Create from bytes
     pub fn from_bytes(bytes: [u8; 32]) -> Self {
-        Self { public_key: bytes }
+        Self { public_key: bytes.to_vec() }
     }
 
     /// Get as hex
@@ -69,11 +72,11 @@ impl SignerId {
             return Err(SignatureError::InvalidLength);
         }
 
-        let mut public_key = [0u8; 32];
+        let mut public_key = Vec::with_capacity(32);
         for i in 0..32 {
             let byte_str = &hex[i * 2..i * 2 + 2];
-            public_key[i] = u8::from_str_radix(byte_str, 16)
-                .map_err(|_| SignatureError::InvalidHex)?;
+            public_key.push(u8::from_str_radix(byte_str, 16)
+                .map_err(|_| SignatureError::InvalidHex)?);
         }
 
         Ok(Self { public_key })
@@ -82,15 +85,16 @@ impl SignerId {
 
 impl fmt::Display for SignerId {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", &self.to_hex()[..16])
+        let hex = self.to_hex();
+        write!(f, "{}", &hex[..16.min(hex.len())])
     }
 }
 
 /// Key pair for signing
 #[derive(Clone)]
 pub struct KeyPair {
-    pub secret_key: [u8; 32],
-    pub public_key: [u8; 32],
+    pub secret_key: Vec<u8>,
+    pub public_key: Vec<u8>,
 }
 
 impl KeyPair {
@@ -98,8 +102,8 @@ impl KeyPair {
     pub fn generate() -> Self {
         // In production, use ed25519_dalep::SigningKey::generate
         // For now, placeholder
-        let mut secret_key = [0u8; 32];
-        let mut public_key = [0u8; 32];
+        let mut secret_key = vec![0u8; 32];
+        let mut public_key = vec![0u8; 32];
 
         // Fill with non-zero for testing
         for i in 0..32 {
@@ -115,14 +119,15 @@ impl KeyPair {
 
     /// Get signer ID
     pub fn signer_id(&self) -> SignerId {
-        SignerId::from_bytes(self.public_key)
+        SignerId { public_key: self.public_key.clone() }
     }
 
     /// Sign a message
     pub fn sign(&self, message: &[u8]) -> Signature {
+        use sha2::Digest;
         // In production: use ed25519_dalek::SigningKey
         // Placeholder: compute simple hash-based signature
-        let mut sig = [0u8; 64];
+        let mut sig = vec![0u8; 64];
 
         // Simple signing for demonstration
         let hash = sha2::Sha256::digest(message);
@@ -131,7 +136,7 @@ impl KeyPair {
             sig[i + 32] = self.secret_key[i];
         }
 
-        Signature::from_bytes(sig)
+        Signature { bytes: sig }
     }
 }
 

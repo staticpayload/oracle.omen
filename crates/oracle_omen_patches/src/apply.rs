@@ -2,16 +2,16 @@
 
 use crate::{
     gate::GateResult,
-    patch::{Patch, PatchStatus, PatchType, PatchTarget},
+    patch::{Patch, PatchId, PatchStatus, PatchTarget},
     signature::Signature,
     signature::SignerId,
     store::PatchStore,
-    store::SignedPatchStore,
 };
 use oracle_omen_core::{
-    event::{Event, EventId, EventKind, EventPayload, LogicalTime},
+    event::{Event, EventId, EventKind, EventPayload},
     hash::Hash,
     state::AgentState,
+    time::LogicalTime,
 };
 use std::collections::BTreeMap;
 
@@ -69,7 +69,7 @@ impl PatchEngine {
 
     /// Submit a patch proposal
     pub fn submit(&mut self, patch: Patch) -> Result<(), ApplyError> {
-        let id = patch.id.clone();
+        let id = patch.id.to_string();
         let status = PatchStatus::Proposed;
 
         self.store.add_patch(id, patch, status).map_err(|e| {
@@ -141,13 +141,14 @@ impl PatchEngine {
         let after_hash = current_state.hash();
 
         // Record application
+        let rollback_data = result.rollback_data.clone();
         let applied = AppliedPatch {
             patch_id: patch_id.to_string(),
             patch_hash: patch.hash(),
             applied_at: LogicalTime::new(0, self.applied.len() as u64),
             before_hash,
             after_hash,
-            rollback_data: result.rollback_data,
+            rollback_data,
         };
 
         self.store.update_status(

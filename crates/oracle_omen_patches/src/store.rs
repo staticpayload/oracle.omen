@@ -1,8 +1,8 @@
 //! Storage for patches.
 
 use crate::{
-    patch::{Patch, PatchStatus},
-    signature::{Signature, SignedPatch, SignerId},
+    patch::{Patch, PatchStatus, SignedPatch},
+    signature::{Signature, SignerId},
 };
 use oracle_omen_core::hash::Hash;
 use std::collections::BTreeMap;
@@ -40,8 +40,8 @@ impl PatchStore {
 
     /// Update patch status
     pub fn update_status(&mut self, id: &str, status: PatchStatus) -> Result<(), StoreError> {
-        if let Some((patch, _)) = self.patches.get_mut(id) {
-            *patch = (patch.clone(), status);
+        if let Some(entry) = self.patches.get_mut(id) {
+            entry.1 = status;
             Ok(())
         } else {
             Err(StoreError::NotFound(id.to_string()))
@@ -58,17 +58,21 @@ impl PatchStore {
 
     /// Get patches by status
     pub fn get_by_status(&self, status: PatchStatus) -> Vec<Patch> {
+        use PatchStatus::*;
         self.patches
             .values()
             .filter(|(_, s)| {
-                // Simple comparison for variant, ignoring content
-                matches!(s, PatchStatus::Proposed) if matches!(status, PatchStatus::Proposed)
-                    || matches!(s, PatchStatus::Tested) if matches!(status, PatchStatus::Tested)
-                    || matches!(s, PatchStatus::Audited) if matches!(status, PatchStatus::Audited)
-                    || matches!(s, PatchStatus::Approved) if matches!(status, PatchStatus::Approved)
-                    || matches!(s, PatchStatus::Applied) if matches!(status, PatchStatus::Applied)
-                    || matches!(s, PatchStatus::Rejected { .. }) if matches!(status, PatchStatus::Rejected { .. })
-                    || matches!(s, PatchStatus::RolledBack { .. }) if matches!(status, PatchStatus::RolledBack { .. })
+                // Compare status variants
+                match (s, &status) {
+                    (Proposed, Proposed) => true,
+                    (Tested, Tested) => true,
+                    (Audited, Audited) => true,
+                    (Approved, Approved) => true,
+                    (Applied, Applied) => true,
+                    (Rejected { .. }, Rejected { .. }) => true,
+                    (RolledBack { .. }, RolledBack { .. }) => true,
+                    _ => false,
+                }
             })
             .map(|(p, _)| p.clone())
             .collect()

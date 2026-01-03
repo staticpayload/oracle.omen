@@ -1,5 +1,6 @@
 //! Patch types and definitions.
 
+use crate::signature::{Signature, SignerId};
 use oracle_omen_core::hash::Hash;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
@@ -91,6 +92,17 @@ impl PatchId {
             sequence,
             checksum: String::new(),
         }
+    }
+
+    /// Convert to string representation
+    pub fn to_string(&self) -> String {
+        format!("{}:{}", self.run_id, self.sequence)
+    }
+}
+
+impl std::fmt::Display for PatchId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}:{}", self.run_id, self.sequence)
     }
 }
 
